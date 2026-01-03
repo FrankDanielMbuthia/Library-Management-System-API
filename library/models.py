@@ -13,23 +13,8 @@ class Book(models.Model):
         return self.title
 
 class CustomUser(AbstractUser):
-    date_of_membership = models.DateField()
+    date_of_membership = models.DateField(auto_now_add=True)
     active_status = models.BooleanField(default=True)
-
-    groups = models.ManyToManyField(
-        'auth.Group',
-        related_name='customuser_set',
-        blank=True,
-        help_text='The groups this user belongs to.',
-        verbose_name='groups'
-    )
-    user_permissions = models.ManyToManyField(
-        'auth.Permission',
-        related_name='customuser_set',
-        blank=True,
-        help_text='Specific permissions for this user.',
-        verbose_name='user permissions'
-    )
 
     def __str__(self):
         return self.username

@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.utils import timezone
 
 class Book(models.Model):
     title = models.CharField(max_length=200)
@@ -25,18 +26,14 @@ class CustomUser(AbstractUser):
         return self.username
 
 class Transaction(models.Model):
-    BORROW = 'BORROW'
-    RETURN = 'RETURN'
-    TRANSACTION_TYPES = [
-        (BORROW, 'Borrow'),
-        (RETURN, 'Return'),
-    ]
-
     user = models.ForeignKey('CustomUser', on_delete=models.CASCADE)
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
-    transaction_type = models.CharField(max_length=6, choices=TRANSACTION_TYPES)
-    transaction_date = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"{self.user.username} - {self.transaction_type} - {self.book.title}"
+    borrowed_at = models.DateTimeField(auto_now_add=True)
+    returned_at = models.DateTimeField(null=True, blank=True)
     
+    def is_active(self):
+        return self.returned_at is None
+    
+    def mark_returned(self):
+        self.returned_at = timezone.now()
+        self.save()

@@ -8,6 +8,11 @@ class Book(models.Model):
     isbn = models.CharField(max_length=13, unique=True)
     pages = models.IntegerField()
     number_of_copies = models.IntegerField()
+    
+    def is_available(self):
+        if self.number_of_copies > 0:
+            return True
+        return False
 
     def __str__(self):
         return self.title
